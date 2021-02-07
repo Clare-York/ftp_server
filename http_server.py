@@ -8,7 +8,7 @@
 import os
 import time
 import math
-from flask import Flask, render_template, url_for, redirect, send_from_directory
+from flask import Flask, render_template, url_for, redirect, send_from_directory, request
 from config import *
 from urllib import parse
 import platform
@@ -35,11 +35,11 @@ def docs(subdir=''):
     :return:
     """
     subdir = parse.unquote(subdir)  # 汉字的url编码解析回汉字
-    flag, backup = cwd(subdir)
+    flag, upper = cwd(subdir)
     if not flag:
-        return redirect(url_for('downloader', fullname=backup))
+        return redirect(url_for('downloader', fullname=upper))
     contents = make_response_data(subdir)
-    return render_template('index.html', contents=contents, backup=backup, subdir=subdir,
+    return render_template('index.html', title=title, contents=contents, upper=upper, subdir=subdir,
                            ossep=os.sep)
 
 
@@ -78,6 +78,28 @@ def delete(filepath):
     return redirect(url_for("docs", subdir=dir_path))
 
 
+@app.route('/new/')
+@app.route('/new/<subdir>')
+def new(subdir=''):
+    subdir = parse.unquote(subdir)
+    name = request.args.get("name", "新建文件夹")
+    upper_path = os.path.join(homedir, subdir)
+    current_path = os.path.join(upper_path, name)
+    if os.path.exists(current_path):
+        return """文件夹已存在,<a href="/doc/%s">点此返回</a>""" % subdir, 201
+    try:
+        os.mkdir(current_path)
+    except Exception as e:
+        print(e)
+    return redirect(url_for("docs", subdir=subdir))
+
+
+@app.route('/upload/')
+@app.route('/upload/<path:subdir>')
+def upload(subdir=''):
+    pass
+
+
 def cwd(subdir):
     """
     切换工作目录
@@ -87,17 +109,17 @@ def cwd(subdir):
     if subdir == '':
         # 名字为空，切换到根目录
         os.chdir(homedir)
-        backup = ""
+        upper = ""
     else:
         if system == "Windows":
             if "\\" in subdir:
-                name = subdir.split("\\")[-2]
-                backup = os.path.join(subdir.split(name)[0], name)
+                upper = "\\".join(subdir.split("\\")[:-1])
             else:
-                backup = ""
+                upper = ""
         else:
-            name = subdir.split("/")[-1]
-            backup = subdir.split(name)[0]  # 获取上级目录
+            # name = subdir.split("/")[-1]
+            # upper = subdir.split(name)[0]  # 获取上级目录
+            upper = "/".join(subdir.split("/")[:-1])
         fullname = homedir + os.sep + subdir
         #  如果是文件，则下载
         if not os.path.isdir(fullname):
@@ -105,7 +127,7 @@ def cwd(subdir):
         #  如果是目录，切换到该目录下面
         else:
             os.chdir(fullname)
-    return 1, backup
+    return 1, upper
 
 
 def make_response_data(subdir):

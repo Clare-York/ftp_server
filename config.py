@@ -19,8 +19,10 @@ password = "123456"
 
 # FTP用户根目录
 # homedir = r"/volume2/Download/FTP_files"  # 群晖配置
-homedir = r"/mnt/wwwroot"  # linux配置
-# homedir = r"D:\www"  # Windows配置
+# homedir = r"/mnt/wwwroot"  # linux配置
+homedir = r"D:\www"  # Windows配置
+
+title = "测试网盘"
 
 # FTP服务监听地址
 ftp_address = ("0.0.0.0", 21)
