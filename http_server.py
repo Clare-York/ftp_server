@@ -60,6 +60,24 @@ def downloader(fullname):
     return send_from_directory(dir_path, filename, as_attachment=True)
 
 
+@app.route('/delete/<path:filepath>')
+def delete(filepath):
+    filepath = parse.unquote(filepath)
+    if system == "Windows":
+        filename = filepath.split("\\")[-1]
+        dir_path = filepath[:-len(filename)]
+    else:
+        filename = filepath.split("/")[-1]
+        dir_path = os.path.join("/", filepath[:-len(filename)])
+    try:
+        path = os.path.join(homedir, filepath)
+        os.remove(path)
+    except Exception as e:
+        print(e)
+
+    return redirect(url_for("docs", subdir=dir_path))
+
+
 def cwd(subdir):
     """
     切换工作目录

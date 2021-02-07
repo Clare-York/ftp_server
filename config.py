@@ -18,8 +18,8 @@ username = "user"
 password = "123456"
 
 # FTP用户根目录
-homedir = r"/volume2/Download/FTP_files"  # 群晖配置
-# homedir = r"/home/files"  # linux配置
+# homedir = r"/volume2/Download/FTP_files"  # 群晖配置
+homedir = r"/mnt/wwwroot"  # linux配置
 # homedir = r"D:\www"  # Windows配置
 
 # FTP服务监听地址
@@ -29,4 +29,4 @@ ftp_address = ("0.0.0.0", 21)
 passive = [3000, 4000]
 
 # HTTP服务监听地址（开发环境）
-http_address = ("0.0.0.0", 8000)
+http_address = ("127.0.0.1", 8000)

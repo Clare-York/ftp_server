@@ -103,6 +103,7 @@
             <th>文件或目录名</th>
             <th>修改时间</th>
             <th>大小</th>
+            <th>操作</th>
         </tr>
         </thead>
         <tbody>
@@ -124,6 +125,9 @@
                    href="{{ url_for('docs', subdir=item.url) }}">{{ item.filename }}</a></td>
             <td>{{ item.mtime }}</td>
             <td>{{ item.size }}</td>
+            {% if item.type =="file" %}
+            <td><a href="{{ url_for('delete', filepath=item.url) }}">删除</a></td>
+            {% endif %}
         </tr>
         {% endfor %}
         </tbody>
