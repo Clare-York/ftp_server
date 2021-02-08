@@ -97,7 +97,10 @@ def new(subdir=''):
 @app.route('/upload/')
 @app.route('/upload/<path:subdir>')
 def upload(subdir=''):
-    pass
+    file = request.files("file")
+    if file:
+        file.save(os.path.join(subdir, file.filename))
+    return redirect(url_for("docs", subdir=subdir))
 
 
 def cwd(subdir):
